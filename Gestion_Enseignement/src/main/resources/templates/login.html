@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <link  rel="stylesheet" href="../static/css/bootstrap.css" th:href="@{/css/bootstrap.css}"/>
+    <link  rel="stylesheet" href="../static/css/buttons.dataTables.min.css" th:href="@{/css/buttons.dataTables.min.css}"/>
+    <link  rel="stylesheet" href="../static/css/jquery.dataTables.min.css" th:href="@{/css/jquery.dataTables.min.css}"/>
+
+    <script src="../static/js/jquery-3.7.0.js" th:src="@{/js/jquery-3.7.0.js}"></script>
+    <script src="../static/js/bootstrap.js" th:src="@{/js/bootstrap.js}"></script>
+    <script src="../static/js/dataTables.buttons.min.js" th:src="@{/js/dataTables.buttons.min.js}"></script>
+    <script src="../static/js/jquery.dataTables.min.js" th:src="@{/js/jquery.dataTables.min.js}"></script>
+
+    <title>Title</title>
+</head>
+<body>
+
+    <div class="container">
+
+        <div class="row">
+            <div class="col-xs-12 col-sm-6 col-sm-offset-1">
+                <h1>Authentification</h1>
+                <form th:action="@{/login}" name="login" role="form" class="form-horizontal" method="post" accept-charset="utf-8">
+                    <div class="form-group">
+                        <div class="col-md-8">
+                            <input name="username" th:placeholder="Username" class="form-control" type="text"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-8">
+                            <input name="password" th:placeholder="Password" class="form-control" type="password"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-offset-0 col-md-8">
+                            <input  class="btn btn-success btn btn-success" type="submit" th:value="Connexion"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
