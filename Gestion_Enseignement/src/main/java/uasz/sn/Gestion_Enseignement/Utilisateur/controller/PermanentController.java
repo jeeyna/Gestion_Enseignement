@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import uasz.sn.Gestion_Enseignement.Authentification.modele.Role;
 import uasz.sn.Gestion_Enseignement.Authentification.modele.Utilisateur;
 import uasz.sn.Gestion_Enseignement.Authentification.service.UtilisateurService;
+import uasz.sn.Gestion_Enseignement.Notification.Service.NotificationService;
+import uasz.sn.Gestion_Enseignement.Utilisateur.modele.Enseignant;
 import uasz.sn.Gestion_Enseignement.Utilisateur.modele.Permanent;
 import uasz.sn.Gestion_Enseignement.Utilisateur.service.EnseignantService;
 import uasz.sn.Gestion_Enseignement.Utilisateur.service.PermanentService;
@@ -29,6 +31,8 @@ public class PermanentController {
 
     @Autowired
     private PermanentService permanentService;
+    @Autowired
+    private NotificationService notificationService;
 
     public PasswordEncoder passwordEncoder(){ return new BCryptPasswordEncoder(); }
 
@@ -43,8 +47,10 @@ public class PermanentController {
     @RequestMapping(value = "/ChefDepartement/Accueil", method = RequestMethod.GET)
     public String accueil_ChefDepartement(Model model, Principal principal) {
         Utilisateur utilisateur = utilisateurService.rechercher_Utilisateur(principal.getName());
-        model.addAttribute("nom", utilisateur.getNom());
-        model.addAttribute("prenom", utilisateur.getPrenom().charAt(0));
+        model.addAttribute("utilisateur", utilisateur);
+        Enseignant enseignant = enseignantService.rechercher(utilisateur.getId());
+      Long notificationsNonLus = notificationService.nombreNotificationNonLu(enseignant);
+        model.addAttribute("notificationsNonLus", notificationsNonLus);
         return "template_ChefDepartement";
     }
 

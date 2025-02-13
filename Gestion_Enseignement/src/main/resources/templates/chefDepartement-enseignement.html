@@ -92,6 +92,14 @@
       background-color: #a80a77;
       color: white;
     }
+
+    .badge-danger {
+      font-size: 1.3rem;
+      padding: 8px 12px;
+      }
+    .fa-bell{
+      font-size: 20px;
+    }
   </style>
 </head>
 <body>
@@ -118,6 +126,16 @@
           </li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle notif" data-toggle="dropdown">
+              <i class="fas fa-bell"></i>
+              <span class="badge badge-danger" th:text="${notificationsNonLus}"></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a th:href="@{/notification/chefDepartement}">Voir toutes les notifications</a></li>
+            </ul>
+          </li>
+
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fas fa-user avatar-icon"></i>

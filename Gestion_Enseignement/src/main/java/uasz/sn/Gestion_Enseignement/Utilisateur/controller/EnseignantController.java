@@ -52,30 +52,5 @@ public class EnseignantController {
         model.addAttribute("prenom", utilisateur.getPrenom().charAt(0));
         return "chefDepartement_Enseignant";
     }
-    @GetMapping("/choix")
-    public String repartir(Model model, Principal principal) {
-        if (principal == null) {
-            return "redirect:/login"; // Rediriger vers la page de connexion si l'utilisateur n'est pas authentifié
-        }
-
-        String username = principal.getName(); // Récupérer le nom d'utilisateur
-        Enseignant enseignant = enseignantService.findByUsername(username);
-
-        // Vérifier si l'utilisateur est bien un enseignant
-        boolean isChefDepartement = false;
-        if (enseignant != null && enseignant.getRoles() != null) {
-            isChefDepartement = enseignant.getRoles().stream()
-                    .anyMatch(role -> role.getRole().equalsIgnoreCase("ChefDepartement"));
-        }
-
-        model.addAttribute("isChefDepartement", isChefDepartement);
-
-        // Récupérer les choix en attente pour le chef de département uniquement
-//        if (isChefDepartement) {
-//            model.addAttribute("choixEnAttente", choixService.getChoixEnAttente());
-//        }
-
-        return "choix";
-    }
 
 }
