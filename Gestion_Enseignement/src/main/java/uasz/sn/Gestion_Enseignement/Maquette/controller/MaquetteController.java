@@ -8,6 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import uasz.sn.Gestion_Enseignement.Authentification.modele.Utilisateur;
+import uasz.sn.Gestion_Enseignement.Authentification.service.UtilisateurService;
 import uasz.sn.Gestion_Enseignement.Maquette.modele.Classe;
 import uasz.sn.Gestion_Enseignement.Maquette.modele.Maquette;
 import uasz.sn.Gestion_Enseignement.Maquette.modele.UE;
@@ -17,8 +19,12 @@ import uasz.sn.Gestion_Enseignement.Maquette.repository.MaquetteRepository;
 import uasz.sn.Gestion_Enseignement.Maquette.repository.UERepository;
 import uasz.sn.Gestion_Enseignement.Maquette.service.MaquetteService;
 import uasz.sn.Gestion_Enseignement.Maquette.service.UEService;
+import uasz.sn.Gestion_Enseignement.Notification.Service.NotificationService;
+import uasz.sn.Gestion_Enseignement.Utilisateur.modele.Enseignant;
+import uasz.sn.Gestion_Enseignement.Utilisateur.service.EnseignantService;
 import uasz.sn.Gestion_Enseignement.exception.ResourceNotFoundException;
 
+import java.security.Principal;
 import java.util.List;
 
 import java.util.List;
@@ -32,6 +38,12 @@ public class MaquetteController {
     private  UEService ueService;
     @Autowired
     private ECRepository ecRepository;
+    @Autowired
+    private UtilisateurService utilisateurService;
+    @Autowired
+    private EnseignantService enseignantService;
+    @Autowired
+    private NotificationService notificationService;
 
     // Afficher la liste des maquettes non archivées
     @GetMapping
@@ -75,7 +87,9 @@ public class MaquetteController {
     }
 
     @GetMapping("/{id}")
-    public String afficherDetailsMaquette(@PathVariable Long id, Model model) {
+    public String afficherDetailsMaquette(@PathVariable Long id, Model model, Principal principal) {
+        Utilisateur utilisateur = utilisateurService.rechercher_Utilisateur(principal.getName());
+        Enseignant enseignant = enseignantService.rechercher(utilisateur.getId());
         Maquette maquette = maquetteService.rechercherMaquetteParId(id);
 
         if (maquette == null) {
@@ -91,6 +105,8 @@ public class MaquetteController {
             ue.setEcs(ecRepository.findByUe(ue));
         }
 
+        model.addAttribute("utilisateur", utilisateur);
+        model.addAttribute("notificationsNonLus", notificationService.nombreNotificationNonLu(enseignant));
         model.addAttribute("maquette", maquette);
         model.addAttribute("uesDansMaquette", uesDansMaquette);
         model.addAttribute("uesNonAjoutees", uesNonAjoutees); // Pour l'ajout d'une nouvelle UE

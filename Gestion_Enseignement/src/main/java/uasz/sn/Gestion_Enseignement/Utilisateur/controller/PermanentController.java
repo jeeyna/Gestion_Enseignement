@@ -49,7 +49,7 @@ public class PermanentController {
         Utilisateur utilisateur = utilisateurService.rechercher_Utilisateur(principal.getName());
         model.addAttribute("utilisateur", utilisateur);
         Enseignant enseignant = enseignantService.rechercher(utilisateur.getId());
-      Long notificationsNonLus = notificationService.nombreNotificationNonLu(enseignant);
+        Long notificationsNonLus = notificationService.nombreNotificationNonLu(enseignant);
         model.addAttribute("notificationsNonLus", notificationsNonLus);
         return "template_ChefDepartement";
     }

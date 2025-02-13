@@ -6,6 +6,8 @@
   <title>Formation</title>
 
   <!-- Stylesheets -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
   <link rel="stylesheet" th:href="@{/css/bootstrap.css}"/>
   <link rel="stylesheet" th:href="@{/css/buttons.dataTables.min.css}"/>
   <link rel="stylesheet" th:href="@{/css/jquery.dataTables.min.css}"/>
@@ -15,34 +17,136 @@
   <script th:src="@{/js/bootstrap.js}"></script>
   <script th:src="@{/js/dataTables.buttons.min.js}"></script>
   <script th:src="@{/js/jquery.dataTables.min.js}"></script>
+  <script src="//cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+
+  <style>
+    /* Style de l'icône avatar */
+    .avatar-icon {
+      font-size: 24px;
+      color: #ffffff;
+      margin-right: 10px;
+    }
+    /* Card style */
+    .card {
+      border: 1px solid #e0e0e0;
+      border-radius: 10px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      background-color: #f8f9fa;
+      margin-top: 20px;
+    }
+
+    /* Navbar style */
+    .navbar-custom {
+      background-color: #750354;
+      border-color: #a80a77;
+    }
+    .navbar-custom a {
+      color: #fff !important;
+    }
+    .dropdown-menu a {
+      color: #007bff !important;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #ece9e6, #ffffff);
+      color: #333;
+    }
+    h2 {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #a80a77;
+      text-align: center;
+    }
+    .btn-primary {
+      background-color: #a80a77;
+      border: none;
+      padding: 5px 20px;
+      border-radius: 6px;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+    .btn-primary:hover {
+      background-color: #a80a77;
+      transform: scale(1.05);
+    }
+    .modal-header {
+      background-color: #a80a77;
+      color: white;
+    }
+    .form-select:focus, .form-control:focus {
+      border-color: #a80a77;
+      box-shadow: 0 0 8px rgba(189, 33, 116, 0.5);
+    }
+    table {
+      width: 100%;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    th, td {
+      padding: 12px;
+      text-align: center;
+    }
+    th {
+      background-color: #a80a77;
+      color: white;
+    }
+
+    .badge-danger {
+      font-size: 1.3rem;
+      padding: 8px 12px;
+    }
+    .fa-bell{
+      font-size: 20px;
+    }
+  </style>
 </head>
 <body>
 <header>
-  <nav class="navbar navbar-inverse">
+  <nav class="navbar navbar-inverse navbar-custom">
     <div class="container-fluid">
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav navbar-left">
-          <li><a href="#">Accueil</a></li>
-          <li><a href="#">Emploi du Temps</a></li>
-          <li><a href="#">Syllabus</a></li>
-          <li><a href="#">Repartition</a></li>
-          <li><a th:href="@{/ChefDepartement/Enseignant}">Enseignants</a></li>
+          <li><a th:href="@{/ChefDepartement/Accueil}"><span>Accueil</span></a></li>
+          <li><a><span>Emploi du Temps</span></a></li>
+          <li><a th:href="@{/ue}"><span>Syllabus</span></a></li>
           <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Maquettes <b class="caret"></b></a>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span>Repartition</span> <b class="caret"></b></a>
             <ul class="dropdown-menu">
-              <li><a th:href="@{/ue}">UE</a></li>
+              <li><a th:href="@{/enseignement/chefDepartement}">Enseignements</a></li>
+            </ul>
+          </li>
+          <li><a th:href="@{/ChefDepartement/Enseignant}"><span>Enseignants</span></a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span>Maquettes</span> <b class="caret"></b></a>
+            <ul class="dropdown-menu">
               <li><a th:href="@{/formation}">Formation</a></li>
             </ul>
           </li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
           <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <span th:text="${prenom + '. ' + nom}"></span> <span class="caret"></span>
+            <a href="#" class="dropdown-toggle notif" data-toggle="dropdown">
+              <i class="fas fa-bell"></i>
+              <span class="badge badge-danger" th:text="${notificationsNonLus}"></span>
             </a>
             <ul class="dropdown-menu">
-              <li><a th:href="@{/profil}">Profil</a></li>
-              <li><a th:href="@{/logout}">Déconnexion</a></li>
+              <li><a th:href="@{/notification/chefDepartement}">Voir toutes les notifications</a></li>
+            </ul>
+          </li>
+
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fas fa-user avatar-icon"></i>
+              <span th:text="${utilisateur.prenom+'. '+utilisateur.nom}"></span>
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a th:href="@{/profil}"><span>Profil</span></a></li>
+              <li><a th:href="@{/logout}"><span>Deconnexion</span></a></li>
             </ul>
           </li>
         </ul>

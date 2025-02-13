@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import uasz.sn.Gestion_Enseignement.Authentification.modele.Utilisateur;
 import uasz.sn.Gestion_Enseignement.Authentification.service.UtilisateurService;
+import uasz.sn.Gestion_Enseignement.Notification.Service.NotificationService;
 import uasz.sn.Gestion_Enseignement.Repartition.Modele.Choix;
 import uasz.sn.Gestion_Enseignement.Repartition.Modele.Enseignement;
 //import uasz.sn.Gestion_Enseignement.Repartition.Service.ChoixService;
@@ -38,6 +39,9 @@ public class EnseignantController {
     @Autowired
     private EnseignantService enseignantService;
 
+    @Autowired
+    private NotificationService notificationService;
+
 //    @Autowired
 //    private ChoixService choixService;
 
@@ -48,8 +52,10 @@ public class EnseignantController {
         List<Vacataire> vacataires=vacataireService.lister();
         model.addAttribute("vacataires", vacataires);
         Utilisateur utilisateur=utilisateurService.rechercher_Utilisateur(principal.getName());
-        model.addAttribute("nom", utilisateur.getNom());
-        model.addAttribute("prenom", utilisateur.getPrenom().charAt(0));
+        Enseignant enseignant = enseignantService.rechercher(utilisateur.getId());
+        Long notificationsNonLus = notificationService.nombreNotificationNonLu(enseignant);
+        model.addAttribute("notificationsNonLus", notificationsNonLus);
+        model.addAttribute("utilisateur", utilisateur);
         return "chefDepartement_Enseignant";
     }
 

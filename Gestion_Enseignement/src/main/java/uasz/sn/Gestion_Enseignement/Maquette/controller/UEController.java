@@ -7,10 +7,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import uasz.sn.Gestion_Enseignement.Authentification.modele.Utilisateur;
+import uasz.sn.Gestion_Enseignement.Authentification.service.UtilisateurService;
 import uasz.sn.Gestion_Enseignement.Maquette.modele.EC;
 import uasz.sn.Gestion_Enseignement.Maquette.modele.UE;
 import uasz.sn.Gestion_Enseignement.Maquette.service.UEService;
+import uasz.sn.Gestion_Enseignement.Notification.Service.NotificationService;
+import uasz.sn.Gestion_Enseignement.Utilisateur.modele.Enseignant;
+import uasz.sn.Gestion_Enseignement.Utilisateur.service.EnseignantService;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -19,6 +25,12 @@ public class UEController {
 
     @Autowired
     private UEService ueService;
+    @Autowired
+    private UtilisateurService utilisateurService;
+    @Autowired
+    private EnseignantService enseignantService;
+    @Autowired
+    private NotificationService notificationService;
 
     @RequestMapping(value = "/ue/{id}", method = RequestMethod.GET)
     public String lister_ue(Model model) {
@@ -27,8 +39,13 @@ public class UEController {
         return "ue";
     }
     @RequestMapping(value = "/ue", method = RequestMethod.GET)
-    public String lister_ues(Model model) {
+    public String lister_ues(Model model, Principal principal) {
         List<UE> ueList = ueService.afficherToutUE();
+        Utilisateur utilisateur = utilisateurService.rechercher_Utilisateur(principal.getName());
+        Enseignant enseignant = enseignantService.rechercher(utilisateur.getId());
+        Long notificationsNonLus = notificationService.nombreNotificationNonLu(enseignant);
+        model.addAttribute("notificationsNonLus", notificationsNonLus);
+        model.addAttribute("utilisateur", utilisateur);
         model.addAttribute("listeDesUE", ueList);
         return "ue";
     }
@@ -52,28 +69,20 @@ public class UEController {
     }
 
     @RequestMapping(value = "/details_ue", method = RequestMethod.GET)
-    public String details_ue(Model model, @RequestParam("id") Long id) {
+    public String details_ue(Model model,Principal principal ,@RequestParam("id") Long id) {
         UE ue = ueService.afficherUE(id);
         List<EC> ecList = ueService.afficherLesEC(ue);
+        Utilisateur utilisateur = utilisateurService.rechercher_Utilisateur(principal.getName());
+        Enseignant enseignant = enseignantService.rechercher(utilisateur.getId());
+        Long notificationsNonLus = notificationService.nombreNotificationNonLu(enseignant);
+        model.addAttribute("notificationsNonLus", notificationsNonLus);
+        model.addAttribute("utilisateur", utilisateur);
         model.addAttribute("ue", ue);
         model.addAttribute("listeDesEC", ecList);
         return "ue_details";
     }
 
 
-    @GetMapping("/ue/{id}/ecs")
-    public String listerEcs(@PathVariable Long id, Model model) {
-        List<EC> ecs = ueService.getEcsByID(id);
-
-        if (ecs.isEmpty()) {
-            model.addAttribute("error", "Aucun EC associé à cette UE !");
-            return "error"; // Page d'erreur
-        }
-
-        model.addAttribute("ecs", ecs);
-        model.addAttribute("ueId", id);
-        return "ecs-list"; // Page Thymeleaf
-    }
 
     @RequestMapping(value = "/archiverUE", method = RequestMethod.POST)
     public String archiver_UE(Long id) {

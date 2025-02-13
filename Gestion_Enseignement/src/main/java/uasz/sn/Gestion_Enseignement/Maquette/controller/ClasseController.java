@@ -4,9 +4,16 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import uasz.sn.Gestion_Enseignement.Authentification.modele.Utilisateur;
+import uasz.sn.Gestion_Enseignement.Authentification.service.UtilisateurService;
 import uasz.sn.Gestion_Enseignement.Maquette.modele.Classe;
 import uasz.sn.Gestion_Enseignement.Maquette.service.ClasseService;
 import uasz.sn.Gestion_Enseignement.Maquette.service.MaquetteService;
+import uasz.sn.Gestion_Enseignement.Notification.Service.NotificationService;
+import uasz.sn.Gestion_Enseignement.Utilisateur.modele.Enseignant;
+import uasz.sn.Gestion_Enseignement.Utilisateur.service.EnseignantService;
+
+import java.security.Principal;
 
 @Controller
 @AllArgsConstructor
@@ -15,6 +22,9 @@ public class ClasseController {
 
     private final ClasseService classeService;
     private final MaquetteService maquetteService;
+    private final UtilisateurService utilisateurService;
+    private final EnseignantService enseignantService;
+    private final NotificationService notificationService;
 
 
 
@@ -42,11 +52,16 @@ public class ClasseController {
     }
 
     @GetMapping("/{id}")
-    public String afficherDetailsClasse(@PathVariable("id") Long id, Model model) {
+    public String afficherDetailsClasse(@PathVariable("id") Long id, Model model, Principal principal) {
         Classe classe = classeService.touverParId(id);
         if (classe != null) {
             model.addAttribute("classe", classe);
             model.addAttribute("maquettesNonArchivees", maquetteService.listerMaquetteByClasse(classe));
+            Utilisateur utilisateur = utilisateurService.rechercher_Utilisateur(principal.getName());
+            Enseignant enseignant = enseignantService.rechercher(utilisateur.getId());
+            Long notificationsNonLus = notificationService.nombreNotificationNonLu(enseignant);
+            model.addAttribute("notificationsNonLus", notificationsNonLus);
+            model.addAttribute("utilisateur", utilisateur);
         }
         return "classe-details";
     }
