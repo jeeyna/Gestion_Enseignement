@@ -13,10 +13,13 @@ import uasz.sn.Gestion_Enseignement.Repartition.Modele.Choix;
 import uasz.sn.Gestion_Enseignement.Repartition.Modele.Enseignement;
 import uasz.sn.Gestion_Enseignement.Repartition.Modele.Statut;
 import uasz.sn.Gestion_Enseignement.Repartition.Repository.ChoixRepository;
+import uasz.sn.Gestion_Enseignement.Repartition.Repository.EnseignementRepository;
 import uasz.sn.Gestion_Enseignement.Utilisateur.modele.Enseignant;
 import uasz.sn.Gestion_Enseignement.Utilisateur.service.EnseignantService;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @Transactional
@@ -31,6 +34,8 @@ public class ChoixService {
     private ChoixRepository choixRepository;
     @Autowired
     private NotificationService notificationService;
+    @Autowired
+    private EnseignementRepository enseignementRepository;
 
     public Choix ajouterChoix(Long idEnseignement) {
         Authentication auth= SecurityContextHolder.getContext().getAuthentication();
@@ -58,5 +63,32 @@ public class ChoixService {
         notification.setMessage("L'enseignant " + enseignant.getPrenom()+ " "+ enseignant.getNom()+ " a choisi l'enseignement "+ enseignement.getEc().getLibelle()+" "+ enseignement.getTypeSeance().name());
         notificationService.envoyerNotification(notification);
         return choixRepository.save(choix);
+    }
+
+    public List<Choix> listeChoixEnseignementChefDep(Enseignant chefDepartement){
+        List<Enseignement> enseignements = enseignementRepository.findByChefDepartement(chefDepartement);
+        List<Choix> choix = new ArrayList<>();
+        for (Enseignement enseignement:enseignements){
+            if (!enseignement.getChoix().isEmpty()){
+                choix.addAll(choixRepository.findByEnseignement(enseignement));
+            }
+        }
+        return choix;
+    }
+
+    public List<Choix> choixEnAttenteChefDep(Enseignant chefDepartement){
+        List<Enseignement> enseignements = enseignementRepository.findByChefDepartement(chefDepartement);
+        List<Choix> choix = new ArrayList<>();
+
+        for (Enseignement enseignement:enseignements){
+            if(!enseignement.getChoix().isEmpty()){
+                for (Choix c:choixRepository.findByEnseignement(enseignement)){
+                    if (c.getStatut().name().equalsIgnoreCase("EN_ATTENTE")){
+                        choix.add(c);
+                    }
+                }
+            }
+        }
+        return choix;
     }
 }
