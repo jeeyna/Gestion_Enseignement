@@ -106,6 +106,9 @@
             font-family: 'Poppins', sans-serif;
             background: linear-gradient(to right, #ece9e6, #ffffff);
             color: #333;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         h2 {
             font-size: 28px;
@@ -219,18 +222,37 @@
             <p class="message-text" th:text="${notification.message}"></p>
             <small class="message-date" th:text="${#dates.format(notification.dateNotification, 'dd/MM/yyyy HH:mm')}"></small>
         </div>
-        <button class="btn-read" th:attr="data-id=${notification.id}" onclick="markAsRead(this)">
+        <!-- Bouton pour ouvrir le modal -->
+        <button th:if="${!notification.isLu()}" class="btn-read" data-toggle="modal" th:attr="data-target='#lecture' + ${notification.id}">
             <i class="fas fa-check"></i> Lire
         </button>
+
+        <!-- Modal -->
+        <div class="modal fade" th:id="'lecture' + ${notification.id}" tabindex="-1" role="dialog" aria-labelledby="modalLabel${notification.id}" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" th:id="'modalLabel' + ${notification.id}">Lecture</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Formulaire de confirmation -->
+                        <form th:action="@{/notification/lire/{id} (id=${notification.id})}" method="post">
+                            <div class="modal-body">
+                                <p>Confirmer la lecture de la notification <span th:text="${notification.id}"></span> ?</p>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Confirmer</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 
-<script>
-    function markAsRead(button) {
-        const notificationId = button.getAttribute('data-id');
-        // Logique AJAX ou redirection pour marquer comme lue
-        alert('Notification ' + notificationId + ' marquée comme lue');
-    }
-</script>
+
 </body>
 </html>

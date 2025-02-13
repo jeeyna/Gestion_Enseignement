@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import uasz.sn.Gestion_Enseignement.Authentification.modele.Utilisateur;
 import uasz.sn.Gestion_Enseignement.Authentification.repository.UtilisateurRepository;
@@ -37,6 +39,11 @@ public class NotificationController {
         List<Notification> notifications= notificationService.findByDestinataire(enseignant);
         model.addAttribute("notifications", notifications);
         return "notification-chefDepartement";
+    }
+    @PostMapping("/lire/{id}")
+    public String lireNotificationChefDepartement(@PathVariable("id") Long id) {
+        notificationService.lireNotification(id);
+        return "redirect:/notification/chefDepartement";
     }
 
 }

@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uasz.sn.Gestion_Enseignement.Authentification.modele.Utilisateur;
 import uasz.sn.Gestion_Enseignement.Authentification.service.UtilisateurService;
+import uasz.sn.Gestion_Enseignement.Notification.Modele.Notification;
+import uasz.sn.Gestion_Enseignement.Notification.Service.NotificationService;
 import uasz.sn.Gestion_Enseignement.Repartition.Modele.Choix;
 import uasz.sn.Gestion_Enseignement.Repartition.Modele.Enseignement;
 import uasz.sn.Gestion_Enseignement.Repartition.Modele.Statut;
@@ -27,6 +29,8 @@ public class ChoixService {
     private EnseignementService enseignementService;
     @Autowired
     private ChoixRepository choixRepository;
+    @Autowired
+    private NotificationService notificationService;
 
     public Choix ajouterChoix(Long idEnseignement) {
         Authentication auth= SecurityContextHolder.getContext().getAuthentication();
@@ -46,7 +50,13 @@ public class ChoixService {
         choix.setEnseignement(enseignement);
         choix.setStatut(Statut.EN_ATTENTE);
         choix.setDateChoix(new Date());
+        Enseignant chefDepartement= enseignement.getChefDepartement();
 
+        Notification notification= new Notification();
+        notification.setLu(false);
+        notification.setDestinataire(chefDepartement);
+        notification.setMessage("L'enseignant " + enseignant.getPrenom()+ " "+ enseignant.getNom()+ " a choisi l'enseignement "+ enseignement.getEc().getLibelle()+" "+ enseignement.getTypeSeance().name());
+        notificationService.envoyerNotification(notification);
         return choixRepository.save(choix);
     }
 }
