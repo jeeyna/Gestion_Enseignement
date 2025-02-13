@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import uasz.sn.Gestion_Enseignement.Authentification.modele.Utilisateur;
 import uasz.sn.Gestion_Enseignement.Authentification.service.UtilisateurService;
+import uasz.sn.Gestion_Enseignement.Notification.Modele.Notification;
 import uasz.sn.Gestion_Enseignement.Notification.Service.NotificationService;
 import uasz.sn.Gestion_Enseignement.Repartition.Modele.Enseignement;
 import uasz.sn.Gestion_Enseignement.Repartition.Service.EnseignementService;
@@ -48,6 +49,9 @@ public class EnseignementController {
     public String listerEnseignement(Model model, Principal principal) {
         Utilisateur utilisateur= utilisateurService.rechercher_Utilisateur(principal.getName());
         List<Enseignement> enseignements = enseignementService.listerEnseignementsDisponibles();
+        Enseignant enseignant= enseignantService.rechercher(utilisateur.getId());
+        Long notificationNonLus= notificationService.nombreNotificationNonLu(enseignant);
+        model.addAttribute("notificationsNonLus", notificationNonLus);
         model.addAttribute("utilisateur", utilisateur);
         model.addAttribute("enseignements", enseignements);
         return "permanent-enseignement";

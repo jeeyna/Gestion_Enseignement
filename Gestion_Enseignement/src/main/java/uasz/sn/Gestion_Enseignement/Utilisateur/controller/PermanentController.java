@@ -40,8 +40,10 @@ public class PermanentController {
     @RequestMapping(value = "/Permanent/Accueil", method = RequestMethod.GET)
     public String accueil_Permanent(Model model, Principal principal) {
         Utilisateur utilisateur= utilisateurService.rechercher_Utilisateur(principal.getName());
-        model.addAttribute("nom", utilisateur.getNom());
-        model.addAttribute("prenom", utilisateur.getPrenom().charAt(0));
+        model.addAttribute("utilisateur", utilisateur);
+        Enseignant enseignant=enseignantService.rechercher(utilisateur.getId());
+        Long notificationsNonLus = notificationService.nombreNotificationNonLu(enseignant);
+        model.addAttribute("notificationsNonLus", notificationsNonLus);
         return "template_Permanent";
     }
     @RequestMapping(value = "/ChefDepartement/Accueil", method = RequestMethod.GET)
