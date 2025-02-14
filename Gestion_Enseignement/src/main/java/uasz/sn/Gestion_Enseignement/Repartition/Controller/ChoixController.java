@@ -3,10 +3,7 @@ package uasz.sn.Gestion_Enseignement.Repartition.Controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import uasz.sn.Gestion_Enseignement.Authentification.modele.Utilisateur;
 import uasz.sn.Gestion_Enseignement.Authentification.service.UtilisateurService;
 import uasz.sn.Gestion_Enseignement.Repartition.Modele.Choix;
@@ -61,5 +58,27 @@ public class ChoixController {
         model.addAttribute("choix", choix);
 
         return "chefDepartement-listeChoixEnAttente";
+    }
+    @PostMapping("/valider/{id}")
+    public String validerChoix(Model model, Principal principal, @PathVariable Long id){
+        Utilisateur utilisateur= utilisateurService.rechercher_Utilisateur(principal.getName());
+        Enseignant chefDepartement= enseignantService.rechercher(utilisateur.getId());
+        choixService.validerChoix(id);
+
+        model.addAttribute("utilisateur", utilisateur);
+        model.addAttribute("chefDepartement",chefDepartement);
+
+        return "redirect:/choix/en_attente/chefDepartement";
+    }
+
+    @PostMapping("/refuser/{id}")
+    public String refuserChoix(Model model, Principal principal, @PathVariable Long id){
+        Utilisateur utilisateur = utilisateurService.rechercher_Utilisateur(principal.getName());
+        Enseignant chefDepartement= enseignantService.rechercher(utilisateur.getId());
+        choixService.refuserChoix(id);
+        model.addAttribute("utilisateur", utilisateur);
+        model.addAttribute("chefDepartement",chefDepartement);
+
+        return "redirect:/choix/en_attente/chefDepartement";
     }
 }

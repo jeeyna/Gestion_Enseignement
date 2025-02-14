@@ -10,6 +10,7 @@ import uasz.sn.Gestion_Enseignement.Maquette.modele.Classe;
 import uasz.sn.Gestion_Enseignement.Maquette.service.ClasseService;
 import uasz.sn.Gestion_Enseignement.Maquette.service.MaquetteService;
 import uasz.sn.Gestion_Enseignement.Notification.Service.NotificationService;
+import uasz.sn.Gestion_Enseignement.Repartition.Service.RepartitionService;
 import uasz.sn.Gestion_Enseignement.Utilisateur.modele.Enseignant;
 import uasz.sn.Gestion_Enseignement.Utilisateur.service.EnseignantService;
 
@@ -25,7 +26,7 @@ public class ClasseController {
     private final UtilisateurService utilisateurService;
     private final EnseignantService enseignantService;
     private final NotificationService notificationService;
-
+    private final RepartitionService repartitionService;
 
 
     // Ajouter une nouvelle classe
@@ -64,6 +65,20 @@ public class ClasseController {
             model.addAttribute("utilisateur", utilisateur);
         }
         return "classe-details";
+    }
+
+
+    @GetMapping("/{classeId}/semestre/{semestre}/repartition")
+    public String getRepartitionByClasseAndSemestre(@PathVariable Long classeId, @PathVariable int semestre, Model model, Principal principal) {
+        Utilisateur utilisateur = utilisateurService.rechercher_Utilisateur(principal.getName());
+        Classe classe = classeService.touverParId(classeId);
+        if (classe != null) {
+            model.addAttribute("utilisateur", utilisateur);
+            model.addAttribute("classe", classe);
+            model.addAttribute("semestre", semestre); // Ajout du semestre
+            model.addAttribute("repartitions",repartitionService.listerRepartitionParClasseEtSemestre(classeId, semestre));
+        }
+        return "classe-repartition";
     }
 
 }

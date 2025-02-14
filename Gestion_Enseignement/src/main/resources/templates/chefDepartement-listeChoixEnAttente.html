@@ -179,6 +179,7 @@
                     <th>#</th>
                     <th>Enseignant</th>
                     <th>Enseignement</th>
+                    <th>Sceance</th>
                     <th>Date</th>
                     <th>Statut</th>
                     <th>Action</th>
@@ -189,6 +190,7 @@
                     <td th:text="${c.id}"></td>
                     <td th:text="${c.enseignant.prenom + ' ' + c.enseignant.nom}"></td>
                     <td th:text="${c.getEnseignement().ec.code + ' - ' + c.getEnseignement().ec.libelle}"></td>
+                    <td th:text="${c.getEnseignement().typeSeance.name()}"></td>
                     <td th:text="${#dates.format(c.getDateChoix(), 'dd-MM-yyyy')}"></td>
                     <td th:text="${c.statut.name()}"
                         th:classappend="${c.statut.name() == 'REFUSE' ? 'text-danger' :
@@ -197,11 +199,59 @@
                     </td>
                     <td>
                         <button class="btn btn-info btn-sm" data-toggle="modal"
-                                th:attr="data-target='#form_Valider'+${c.id}">Modifier</button>
+                                th:attr="data-target='#form_Valider'+${c.id}">Valider</button>
                         <button class="btn btn-danger btn-sm" data-toggle="modal"
-                                th:attr="data-target='#form_Refuser'+${c.id}">Archiver</button>
+                                th:attr="data-target='#form_Refuser'+${c.id}">Refuser</button>
                     </td>
+
+                    <!--Modal valider-->
+                    <div class="modal fade" th:id="'form_Valider' + ${c.id}" tabindex="-1" role="dialog" aria-labelledby="modalLabel${c.id}" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" th:id="'modalLabel' + ${c.id}">Valider</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <!-- Formulaire de confirmation -->
+                                    <form th:action="@{/choix/valider/{id} (id=${c.id})}" method="post">
+                                        <div class="modal-body">
+                                            <p>Voulez vous valider ce choix<span th:text="${c.id}"></span> ?</p>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Confirmer</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--Modal refuser-->
+                    <div class="modal fade" th:id="'form_Refuser' + ${c.id}" tabindex="-1" role="dialog" aria-labelledby="modalLabel${c.id}" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" th:id="'modalLabel' + ${c.id}">Refuser</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <!-- Formulaire de confirmation -->
+                                    <form th:action="@{/choix/refuser/{id} (id=${c.id})}" method="post">
+                                        <div class="modal-body">
+                                            <p>Voulez vous refuser ce choix<span th:text="${c.id}"></span> ?</p>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Confirmer</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </tr>
+
+
 
                 </tbody>
             </table>

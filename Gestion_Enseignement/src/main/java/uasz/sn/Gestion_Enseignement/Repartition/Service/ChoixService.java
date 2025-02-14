@@ -138,6 +138,8 @@ public class ChoixService {
         notification.setMessage(
                 "Votre choix pour l'enseignement : " + choix.getEnseignement().getEc().getLibelle() +" de type " + choix.getEnseignement().getTypeSeance()+" a été validé.");
         notificationService.envoyerNotification(notification);
+
+
     }
 
     public void refuserChoix(Long choixId) {
