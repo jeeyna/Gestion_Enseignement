@@ -170,7 +170,7 @@
 
 <div class="container-fluid">
     <div class="card text-center">
-        <h2>Listes des choix de <span th:text="${chefDepartement.prenom + ' '+ chefDepartement.nom}"></span></h2>
+        <h2>Listes des choix a Valider de <span th:text="${chefDepartement.prenom + ' '+ chefDepartement.nom}"></span></h2>
         <p>Cette section contient les choix des enseignements attribués au chef de département.</p>
         <div class="table-responsive mt-4">
             <table id="maquetteTable" class="table table-striped table-bordered">
@@ -181,6 +181,7 @@
                     <th>Enseignement</th>
                     <th>Date</th>
                     <th>Statut</th>
+                    <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -192,7 +193,14 @@
                     <td th:text="${c.statut.name()}"
                         th:classappend="${c.statut.name() == 'REFUSE' ? 'text-danger' :
                          c.statut.name() == 'EN_ATTENTE' ? 'text-warning' :
-                         c.statut.name() == 'ACCEPTE' ? 'text-success' : ''}"></td>
+                         c.statut.name() == 'ACCEPTE' ? 'text-success' : ''}">
+                    </td>
+                    <td>
+                        <button class="btn btn-info btn-sm" data-toggle="modal"
+                                th:attr="data-target='#form_Valider'+${c.id}">Modifier</button>
+                        <button class="btn btn-danger btn-sm" data-toggle="modal"
+                                th:attr="data-target='#form_Refuser'+${c.id}">Archiver</button>
+                    </td>
                 </tr>
 
                 </tbody>

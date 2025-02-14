@@ -50,4 +50,16 @@ public class ChoixController {
         return "chefDepartement-listeChoix";
 
     }
+
+    @GetMapping("/en_attente/chefDepartement")
+    public String listeChoixEnAttente(Model model, Principal principal){
+        Utilisateur utilisateur= utilisateurService.rechercher_Utilisateur(principal.getName());
+        Enseignant chefDepartement= enseignantService.rechercher(utilisateur.getId());
+        List<Choix> choix = choixService.choixEnAttenteChefDep(chefDepartement);
+        model.addAttribute("utilisateur", utilisateur);
+        model.addAttribute("chefDepartement",chefDepartement);
+        model.addAttribute("choix", choix);
+
+        return "chefDepartement-listeChoixEnAttente";
+    }
 }
